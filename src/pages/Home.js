@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     View, 
     Text, 
@@ -12,19 +12,38 @@ import { Button } from '../components/Button';
 import { SkillCard } from '../components/SkillCard';
 
 export function Home() {
+    //usamos useState ao invés de uma variável let, pois, esse hook re-renderiza a página atuomáticamente;
     const [newSkill, setNewSkill] = useState('');
     const [mySkills, setMySkills] = useState([]);
+    const [greetings, setGreetings] = useState('');
 
     //handle é usado quando a função é disparada após uma interação do usuário;
     function handleAddNewSkill() {
         setMySkills(oldState => [...oldState, newSkill]);
     }
 
+    useEffect(() => {
+        const currentHour = new Date().getHours();
+
+        if(currentHour < 12) {
+            return setGreetings('Good morning!');
+        }
+        if(currentHour < 18) {
+            return setGreetings('Good afternoon!');
+        }
+        return setGreetings('Good night!');
+
+    }, [])
+
     return (
         <View style={styles.container}>
 
             <Text style={styles.title}>
-                Hello World!
+                Hello World
+            </Text>
+
+            <Text style={styles.greetings}>
+                { greetings }
             </Text>
 
             <TextInput 
@@ -42,7 +61,7 @@ export function Home() {
 
             <FlatList 
                 data={mySkills}
-                keyExtractor={item => item}
+                keyExtractor={(_, index) => index}
                 renderItem={({ item }) => <SkillCard skill={item} />}
             />
 
@@ -71,4 +90,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         borderRadius: 7
     },
+    greetings: {
+        color: '#FFF',
+    }
 })

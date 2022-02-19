@@ -12,15 +12,26 @@ import {
 import { Button } from '../components/Button';
 import { SkillCard } from '../components/SkillCard';
 
+interface SkillData {
+    id: string;
+    name: string;
+    //date?: Date; quando eu coloco interrogação, ele vira opcional;
+}
+
 export function Home() {
     //usamos useState ao invés de uma variável let, pois, esse hook re-renderiza a página atuomáticamente;
     const [newSkill, setNewSkill] = useState('');
-    const [mySkills, setMySkills] = useState([]);
-    const [greetings, setGreetings] = useState('');
+    const [mySkills, setMySkills] = useState<SkillData[]>([]);
+    const [greetings, setGreetings] = useState(''); 
 
     //handle é usado quando a função é disparada após uma interação do usuário;
     function handleAddNewSkill() {
-        setMySkills(oldState => [...oldState, newSkill]);
+        const data = { 
+            id: String(new Date().getTime()),
+            name: newSkill
+        }
+
+        setMySkills(oldState => [...oldState, data]);
     }
 
     useEffect(() => {
@@ -62,8 +73,8 @@ export function Home() {
 
             <FlatList 
                 data={mySkills}
-                keyExtractor={(_, index) => index}
-                renderItem={({ item }) => <SkillCard skill={item} />}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => <SkillCard skill={item.name} />}
             />
 
         </View>
@@ -74,7 +85,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#121015',
-        paddingHorizontal: 70,
         paddingVertical: 70,
         paddingHorizontal: 30
     },
